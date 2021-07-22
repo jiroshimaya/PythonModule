@@ -46,7 +46,7 @@ class IndependentWord:
   def isIndependentWord(self, token):
     pos = token[self.Constant.POS]
     pos_detail_1 = token[self.Constant.POS_DETAIL_1]
-    if pos == "名詞" and pos_detail_1 in ['一般','固有名詞','サ変接続','形容動詞語幹']:
+    if pos == "名詞" and pos_detail_1 in ['一般','固有名詞','サ変接続','形容動詞語幹']: #用途によっては「副詞可能」を足しても良いかもしれません
       return True
     elif pos == '形容詞' and pos_detail_1 == '自立':
       return True
@@ -84,5 +84,5 @@ class IndependentWord:
 
 if __name__ == "__main__":
   idptwd = IndependentWord()
-  result = idptwd.extract("私のお墓の前で泣かないでください。そこに私はいません")
+  result = idptwd.extract("今日は来てくれてありがとう")
   print(result)
