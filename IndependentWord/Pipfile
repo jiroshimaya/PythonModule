@@ -14,4 +14,4 @@ python_version = "3.9"
 
 [scripts]
 start = "python IndependentWord.py"
-test = "python test.py"
+test = "python test_IndependentWord.py"
