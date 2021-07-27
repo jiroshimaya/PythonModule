@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mecab-python3 = "*"
+jaconv = "*"
+regex = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+start = "python Rubi.py"
+startM = "python MeCabWrapper.py"
+startK = "python Kanji.py"

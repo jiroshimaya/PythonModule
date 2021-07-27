@@ -7,7 +7,7 @@ class IndependentWord:
       self.m = MeCab.Tagger("-d "+dictpath)
     else:
       self.m = MeCab.Tagger()   
-    self.kanaalpha = regex.compile(r'[\p{Script=Hiragana}\p{Script=Katakana}ーA-Za-z]+')
+    self.kanaalpha = regex.compile(r'[\p{Script=Hiragana}\p{Script=Katakana}ーA-Za-z]')
     self.number = regex.compile("[0-9０-９]+")
   
   class Constant:
