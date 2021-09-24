@@ -1,56 +1,9 @@
 import os
 import json
-import re
 
 PATH = os.path.join(".","data","kanjiyomi.json")
 
 class Kanji:
-  def __init__(self, path=None):
-    self.kanji = self.load(path)
-    self.first_bad_kana = re.compile("^[ャュョァィゥェォヮッンー][ーンッ]*")
-    self.last_bad_kana = re.compile("[ャュョァィゥェォヮッンー]*$")
-  
-  def load(self, path=None):
-    if not path:
-      path = PATH
-    path = os.path.join(os.path.dirname(__file__), path)
-    data = None
-    with open(path, "r") as f:
-      data = json.load(f)
-    return data
-  
-  #不正なひらがなで始まっていたらその文字列を、そうでなければ空文字を返す
-  def getFirstBadKana(self, text):
-    result = self.first_bad_kana.search(text)
-    if not result: return ""
-    else: return result.group()
-  def getLastBadKana(self, text):
-    result = self.last_bad_kana.search(text)
-    if not result: return ""
-    else: return result.group()
-    
-  #小文字や促音などで始まっている発音があれば直前の要素と調整して修正する
-  def formatOutput(self, output):
-    output = output[:]
-    result = [output[0]]
-    for s,p in output[1:]:
-      badFisrtKana = self.getFirstBadKana(p)
-      if not badFisrtKana:
-        result.append([s,p])
-        continue
-      
-      last_p = result[-1][1]
-      lastBadKana = self.getLastBadKana(last_p)
-      thisRest = p[len(badFirstKana):]
-      lastRest = last_p[:-1*(len(lastBadKana))]
-      
-      if len(lastRest) <= len(thisRest):
-        result[-1][1] += badFirstKana
-        result.append([s, thisRest])
-      else:
-        result[-1][1] = last_p[:-1*(len(lastBadKana)+1)]
-        result.append([s, last_p[(len(lastBadKana)+1):]+p])
-    return result
   
   def allocate(self, surface, pronunciation):
     kanji_dict = self.kanji
@@ -109,9 +62,6 @@ class Kanji:
         ])
     else:
       pass
-    
-    output = self.formatOutput(output)
-    
             
     return output  
   

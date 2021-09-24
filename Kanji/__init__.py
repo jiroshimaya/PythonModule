@@ -1,0 +1,1 @@
+from Kanji.Kanji import Kanji

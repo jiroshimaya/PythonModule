@@ -18,16 +18,18 @@ class MeCabWrapper:
     READING = "reading" #読み
     CONJUGATED_TYPE = "conjugated_type" #活用
     CONJUGATED_FORM = "conjugated_form" #活用形
+    SIGN = "記号"
     
   #mecabの出力行をobjectに変換
   #mecabの出力フォーマットに応じて適宜修正する
   def lineToDict(self, line):
     surface, tmp = line.split("\t")
     others = tmp.split(",")
+    #print(line)
     
     Const = self.Constant
     
-    return {
+    obj = {
       Const.SURFACE: surface,
       Const.POS: others[0],
       Const.POS_DETAIL_1: others[1],
@@ -36,9 +38,13 @@ class MeCabWrapper:
       Const.CONJUGATED_TYPE: others[4],
       Const.CONJUGATED_FORM: others[5],
       Const.BASIC: others[6],
-      Const.READING: others[7],
-      Const.PRONUNCIATION: others[8]
-      }    
+      Const.READING: "*",
+      Const.PRONUNCIATION: "*"
+      }
+    if len(others)==9:
+      obj[Const.READING]=others[7]
+      obj[Const.PRONUNCIATION]=others[8]
+    return obj
   def parse(self, text):
     lines = self.m.parse(text).splitlines()[:-1]
     tokens = [self.lineToDict(line) for line in lines]
@@ -46,7 +52,13 @@ class MeCabWrapper:
   
 if __name__ == "__main__":
   m = MeCabWrapper()
-  tokens = m.parse("今日は来てくれてありがとう")
-  for token in tokens:
-    print(token)
+  testcase = [
+    "今日は来てくれてありがとう",
+    "Hello, nice to meet you"
+    ]
+  for c in testcase:
+    tokens = m.parse(c)
+    for token in tokens:
+      print(token)
+    print("")
     
