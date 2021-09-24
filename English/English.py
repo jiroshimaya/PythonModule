@@ -1,9 +1,11 @@
 import os,sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import json
-import jaconv
+from Romaji import Romaji
+import re
+#import jaconv
 
 ENGLISH_DICT_PATH = os.path.join(os.path.dirname(__file__),"data","bep-eng.json")
-ROMAN_TREE_PATH = os.path.join(os.path.dirname(__file__),"data","tree_roma2kana.json")
 class JsonLoader:
   @staticmethod
   def load(path):
@@ -35,10 +37,22 @@ class Apostrophe:
     return cls.STRING in text
   @classmethod
   def format(cls, text):
-    return text.replace(OTHER_APOS, APOS)
+    return text.replace(cls.OTHER_APOS, cls.APOS)
 
 class English:
   english = JsonLoader.loadRelative(ENGLISH_DICT_PATH)
+  transtable = str.maketrans(
+    'ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ',
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    )
+  alphabet_pattern = re.compile("[a-zA-Z]+")
+  
+  @classmethod
+  def containAlphabet(cls, text):
+    if cls.alphabet_pattern.search(text):
+      return True
+    else:
+      return False
   
   @staticmethod
   def load(path=None):
@@ -49,17 +63,44 @@ class English:
     with open(path, "r") as f:
       data = json.load(f)
     return data
-  @staticmethod
-  def zenToHan(text):
-    return mojimoji.zen_to_han(text)
+  @classmethod
+  def zenToHan(cls,text):
+    return text.translate(cls.transtable)
   
   @staticmethod
   def romanToKana(text):
-    pass 
+    return Romaji.toKana(text)
+  
+  @classmethod
+  def wordToKana(cls, text):
+    text2 = text.upper()
+    text2 = Apostrophe.format(text2)
+    return cls.english.get(text2,text)
+  
+  @classmethod
+  def alphabetToKana(cls, text):
+    text2 = text.upper()
+    result = ""
+    for t1,t2 in zip(text, text2):
+      result += cls.english.get(t2,t1)
+    return result
+  
+  @classmethod
+  def toKana(cls, text):
+    text = cls.zenToHan(text)
+    text = cls.wordToKana(text)
+    if not cls.containAlphabet(text):
+      return text
+    text = cls.romanToKana(text)
+    if not cls.containAlphabet(text):
+      return text
+    text = cls.alphabetToKana(text)
+    return text
+    
 
 if __name__=="__main__":
   testcase = [
     "Hello",
     "I'm"
     ]
-  print(RomanToKana.execute("konnichiwan"))
+  print(English.toKana("konnichiwan"))
