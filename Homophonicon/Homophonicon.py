@@ -1,10 +1,9 @@
-import editdistance as ed
 import os
 
 class Homophonicon:
 
   @classmethod
-  def getHomophonicWord(cls, word1, wordlist):
+  def getHomophonicWord(cls, word, wordlist):
     dists = []
     for w in wordlist:
       dist = cls.getDistance(word, w)
@@ -16,7 +15,10 @@ class Homophonicon:
   
   @staticmethod
   def getDistance(word1, word2):
-    dist = ed.eval(word1, word2)
+    dist = 0
+    assert len(word1) == len(word2)
+    for c1,c2 in zip(word1,word2):
+      if c1 != c2: dist += 1
     return dist
     
   @classmethod
@@ -24,6 +26,7 @@ class Homophonicon:
     with open(path) as f:
       wordlist = f.read().strip().splitlines()
     wordlist = [w.strip() for w in wordlist if w] #空文字を除く、前後の空白を除く
+    
     return wordlist
   
 if __name__=="__main__":
@@ -36,7 +39,7 @@ if __name__=="__main__":
     "ワタナベ",
     "ヤマモト"
     ]
-  PATH = os.path.join(os.path.dirname(__file__),"data","pokemon.txt")
+  PATH = os.path.join(os.path.dirname(__file__),"wordlist","pokemon.txt")
   pokemonlist = Homophonicon.getWordList(PATH)
   for c in cases:
     print(c, Homophonicon.getHomophonicWord(c, pokemonlist))
