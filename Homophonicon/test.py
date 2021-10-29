@@ -4,7 +4,7 @@ Cases = [
   ]
 
 class Test(unittest.TestCase):
-  def test(self):
+  def test_practice0(self):
     for arg, result in Cases:
       self.assertEqual(Homophonicon.execute(arg), result)
 

@@ -1,0 +1,1 @@
+from KanaConv.KanaConv import KanaConv

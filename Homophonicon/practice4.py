@@ -3,7 +3,6 @@ import csv
 import os, copy
 from typing import Optional, TypedDict, Union
 from Morasep import Morasep
-from KanaConv import KanaConv
 import random, datetime
 
 
@@ -25,26 +24,28 @@ class Homophonicon:
   @classmethod
   def execute(cls, text: str, wordlist) -> WordSeqDict:
     memo: dict[(int,int), WordSeqDict] = {}
-    usedWordId = set()
+    #usedWordId = set()
     
-    def getWord(word: WordDict) -> ScoreDict:
+    def getWord(word: WordDict, usedWordId: set[int]) -> ScoreDict:
       ranks: list[ScoreDict] = cls.getHomophonicRank(word, wordlist)
       for r in ranks:
         id = r["word"]["id"]
         if id in usedWordId: continue
-        usedWordId.add(id)
+        #usedWordId.add(id)
         return r
-      return ScoreDict(score=float("inf"), word=WordDict(surface="",token=()), original=word)
+      return ScoreDict(score=float("inf"), word=WordDict(surface="",token=(),id=-1), original=word)
 
     tokens = cls.tokenize(text)
     
 
-    def dp(s,e) -> WordSeqDict:
+    def dp(s,e, usedWordId: set[int]) -> WordSeqDict:
+      #他の関数への影響を与えないように値コピーする
+      
       if (s,e) in memo:
         return memo[s,e]
       
       original = WordDict(surface=cls.detokenize(tokens[s:e]), token=tokens[s:e])
-      dist = getWord(original)
+      dist = getWord(original, usedWordId)
       ws1 = WordSeqDict(
           score=dist["score"], 
           words=[dist]
